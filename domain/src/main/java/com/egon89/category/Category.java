@@ -1,6 +1,7 @@
 package com.egon89.category;
 
 import com.egon89.AggregateRoot;
+import com.egon89.validation.ValidationHandler;
 
 import java.time.Instant;
 
@@ -37,6 +38,11 @@ public class Category extends AggregateRoot<CategoryID> {
 
     return new Category(id, aName, aDescription, isActive, now, now, null);
 
+  }
+
+  @Override
+  public void validate(ValidationHandler handler) {
+    new CategoryValidator(this, handler).validate();
   }
 
   public String getName() {
