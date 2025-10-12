@@ -4,16 +4,20 @@ import com.egon89.validation.Error;
 
 import java.util.List;
 
-public class DomainException extends RuntimeException {
+public class DomainException extends NoStackTraceException {
   private final List<Error> errors;
 
-  private DomainException(List<Error> errors) {
-    super("", null, true, false);
+  private DomainException(final String message, List<Error> errors) {
+    super(message);
     this.errors = errors;
   }
 
   public static DomainException with(final List<Error> errors) {
-    return new DomainException(errors);
+    return new DomainException("", errors);
+  }
+
+  public static DomainException with(final Error error) {
+    return new DomainException(error.message(), List.of(error));
   }
 
   public List<Error> getErrors() {
