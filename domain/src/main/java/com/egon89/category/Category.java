@@ -4,14 +4,15 @@ import com.egon89.AggregateRoot;
 import com.egon89.validation.ValidationHandler;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public class Category extends AggregateRoot<CategoryID> {
   private final String name;
   private final String description;
-  private final boolean active;
+  private boolean active;
   private final Instant createdAt;
-  private final Instant updatedAt;
-  private final Instant deletedAt;
+  private Instant updatedAt;
+  private Instant deletedAt;
 
   private Category(
       final CategoryID id,
@@ -34,12 +35,29 @@ public class Category extends AggregateRoot<CategoryID> {
   public static Category newCategory(final String aName, final String aDescription, final boolean isActive) {
     final var id = CategoryID.unique();
 
-    final var now = Instant.now();
+    final var now = java.time.Instant.now();
 
     final var deletedAt = isActive ? null : now;
 
     return new Category(id, aName, aDescription, isActive, now, now, deletedAt);
+  }
 
+  public Category activate() {
+    this.deletedAt = null;
+    this.active = true;
+    this.updatedAt = Instant.now();
+
+    return this;
+  }
+
+  public Category deactivate() {
+    if (Objects.isNull(getDeletedAt())) {
+      this.deletedAt = Instant.now();
+    }
+    this.active = false;
+    this.updatedAt = Instant.now();
+
+    return this;
   }
 
   @Override
